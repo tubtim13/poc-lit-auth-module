@@ -15,13 +15,16 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:federation": "vite --config vite.config.federation.ts",
     "build": "tsc && vite build",
+    "build:federation": "vite build --config vite.config.federation.ts",
     "preview": "vite preview"
   },
   "dependencies": {
     "@azure/msal-browser": "^5.4.0"
   },
   "devDependencies": {
+    "@module-federation/vite": "^1.12.0",
     "@types/node": "^20.11.0",
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
