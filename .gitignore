@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 
-public/assets/config/config.json
+public/configs/*
