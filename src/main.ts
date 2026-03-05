@@ -3,9 +3,10 @@ import type { SinghaAuth } from './auth-module.element.js';
 
 const init = async () => {
   try {
-    const res = await fetch('/assets/config/config.json');
+    const res = await fetch('/config/config.json');
     const config = await res.json();
 
+    console.log('config', config);
     const authEl = document.querySelector<SinghaAuth>('singha-auth');
     if (!authEl) {
       console.warn('[Dev] <singha-auth> element not found in DOM');

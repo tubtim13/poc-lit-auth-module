@@ -9,8 +9,17 @@ export default defineConfig({
     }),
   ],
   server: {
-    port: 4000,
+    port: 4001,
     open: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  },
+  preview: {
+    port: 4000,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
   },
   build: {
     lib: {

@@ -18,7 +18,8 @@
     "dev:federation": "vite --config vite.config.federation.ts",
     "build": "tsc && vite build",
     "build:federation": "vite build --config vite.config.federation.ts",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "vite build && vite preview"
   },
   "dependencies": {
     "@azure/msal-browser": "^5.4.0"
