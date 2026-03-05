@@ -3,15 +3,23 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "dist/singha-auth-module.umd.cjs",
+  "module": "dist/singha-auth-module.js",
+  "types": "dist/singha-auth-module.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/singha-auth-module.js",
+      "require": "./dist/singha-auth-module.umd.cjs",
+      "types": "./dist/singha-auth-module.d.ts"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@azure/msal-browser": "^5.4.0",
-    "@lit/context": "^1.1.6",
-    "lit": "^3.3.1"
+    "@azure/msal-browser": "^5.4.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

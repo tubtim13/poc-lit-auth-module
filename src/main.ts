@@ -1,25 +1,39 @@
-import { initMsal } from './services/auth-service.js';
-import { type AuthModule } from './auth-module.element.js';
+import './auth-module.element.js';
+import type { SinghaAuth } from './auth-module.element.js';
 
-const initApp = async () => {
+const init = async () => {
   try {
-    const response = await fetch('/assets/config/config.json');
-    const config = await response.json();
+    const res = await fetch('/assets/config/config.json');
+    const config = await res.json();
 
-    const msalInstance = await initMsal(config);
-
-    await import('./auth-module.element.js');
-
-    const authModule = document.querySelector<AuthModule>('auth-module');
-    if (authModule) {
-      authModule.appData = { config, msalInstance };
-    } else {
-      console.warn('auth-module element not found in DOM');
+    const authEl = document.querySelector<SinghaAuth>('singha-auth');
+    if (!authEl) {
+      console.warn('[Dev] <singha-auth> element not found in DOM');
+      return;
     }
+
+    authEl.addEventListener('singha-auth-ready', (e) => {
+      const user = (e as CustomEvent<{ user: unknown }>).detail?.user;
+      console.log('[Dev] Auth ready — user:', user ?? 'not signed in');
+    });
+
+    authEl.addEventListener('singha-auth-login', (e) => {
+      const user = (e as CustomEvent<{ user: { name?: string } }>).detail?.user;
+      console.log('[Dev] Logged in:', user?.name);
+    });
+
+    authEl.addEventListener('singha-auth-logout', () => {
+      console.log('[Dev] Logged out');
+    });
+
+    authEl.addEventListener('singha-auth-error', (e) => {
+      console.error('[Dev] Auth error:', (e as CustomEvent<{ error: unknown }>).detail?.error);
+    });
+
+    await authEl.init(config);
   } catch (error) {
-    console.error('Initialization error:', error);
-    await import('./auth-module.element.js');
+    console.error('[Dev] Init failed:', error);
   }
 };
 
-initApp();
+init();
