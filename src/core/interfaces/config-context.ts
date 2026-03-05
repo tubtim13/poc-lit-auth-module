@@ -9,8 +9,9 @@ export interface AppConfig {
   // API
   DISABLE_INTERCEPTOR: boolean;
 
-  //app info
+  // App info
   version: string;
+  NODE_ENV?: string;
 }
 
 export interface AppContext {
@@ -19,6 +20,3 @@ export interface AppContext {
 }
 
 export const appContext = createContext<AppContext | undefined>(Symbol('app-context'));
-
-/** @deprecated Use appContext instead */
-export const configContext = createContext<AppConfig | undefined>(Symbol('app-config'));

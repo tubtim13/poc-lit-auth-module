@@ -1,16 +1,10 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, state, property } from 'lit/decorators.js';
-import { consume } from '@lit/context';
+import { customElement, state } from 'lit/decorators.js';
 import { type AccountInfo } from '@azure/msal-browser';
-import { appContext, type AppContext } from '../core/interfaces/config-context';
 import { userService } from '../services/user-service';
 
 @customElement('user-info')
 export class UserInfo extends LitElement {
-  @consume({ context: appContext, subscribe: true })
-  @property({ type: Object })
-  private readonly _contextData?: AppContext;
-
   @state()
   private _account: AccountInfo | null = null;
 
@@ -89,14 +83,14 @@ export class UserInfo extends LitElement {
         <div class="avatar">${this._account.name?.charAt(0) || 'U'}</div>
         <div class="user-name">${this._account.name}</div>
       </div>
-      
+
       <div class="info-grid">
         <div class="label">Username:</div>
         <div class="value">${this._account.username}</div>
-        
+
         <div class="label">Tenant ID:</div>
         <div class="value">${this._account.tenantId}</div>
-        
+
         <div class="label">Environment:</div>
         <div class="value">${this._account.environment}</div>
       </div>

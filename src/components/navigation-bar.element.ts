@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, state, property } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { consume } from '@lit/context';
 import { type AccountInfo } from '@azure/msal-browser';
 import { appContext, type AppContext } from '../core/interfaces/config-context';
@@ -8,8 +8,8 @@ import { userService } from '../services/user-service';
 @customElement('navigation-bar')
 export class NavigationBar extends LitElement {
   @consume({ context: appContext, subscribe: true })
-  @property({ type: Object })
-  private readonly _contextData?: AppContext;
+  @state()
+  private _contextData?: AppContext;
 
   @state()
   private _account: AccountInfo | null = null;

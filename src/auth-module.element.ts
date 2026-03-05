@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, state, property } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { provide } from '@lit/context';
 import { type AccountInfo } from '@azure/msal-browser';
 import { appContext, type AppContext } from './core/interfaces/config-context';
@@ -8,16 +8,13 @@ import './components/navigation-bar.element';
 import './components/user-info.element';
 import { userService } from './services/user-service';
 
-
 /**
  * <auth-module> — shell component, mounts to index.html
  */
 @customElement('auth-module')
 export class AuthModule extends LitElement {
-  @property({ type: Object })
   set appData(data: AppContext) {
     this._contextData = data;
-    this.config = data.config;
     this._handleMsalRedirect();
   }
 
@@ -27,9 +24,10 @@ export class AuthModule extends LitElement {
   @state()
   private _contextData?: AppContext;
 
-  async connectedCallback() {
+  @state() private _theme: 'dark' | 'light' = 'dark';
+
+  connectedCallback() {
     super.connectedCallback();
-    console.log('AuthModule context initialized:', !!this._contextData);
   }
 
   private async _handleMsalRedirect() {
@@ -37,7 +35,6 @@ export class AuthModule extends LitElement {
     try {
       await this._contextData.msalInstance.handleRedirectPromise();
       const accounts = this._contextData.msalInstance.getAllAccounts();
-      console.log('MSAL Accounts:', accounts);
       if (accounts.length > 0) {
         this._account = accounts[0];
         userService.setUser(this._account);
@@ -49,23 +46,33 @@ export class AuthModule extends LitElement {
 
   private async _login() {
     if (!this._contextData?.msalInstance) return;
-    await this._contextData.msalInstance.loginRedirect({
-      scopes: ['openid', 'profile', 'User.Read']
-    }).then((result) => {
-      console.error('MSAL Login Success:', result);
-    }).catch((error) => {
+    try {
+      await this._contextData.msalInstance.loginRedirect({
+        scopes: ['openid', 'profile', 'User.Read']
+      });
+    } catch (error) {
       console.error('MSAL Login Error:', error);
-    });
+    }
   }
 
-  @state()
-  config?: AppContext['config'];
+  private _toggleTheme() {
+    this._theme = this._theme === 'dark' ? 'light' : 'dark';
+    this.setAttribute('theme', this._theme);
+  }
 
-  @state() private _theme: 'dark' | 'light' = 'dark';
-
-  static styles = [
+  static readonly styles = [
     tokens,
     css`
+      :host([theme='light']) {
+        --color-bg: #f5f5f0;
+        --color-surface: #ffffff;
+        --color-border: #d8d4c8;
+        --color-text: #1a1a1a;
+        --color-muted: #888;
+        --color-accent: #a07830;
+        --color-accent-dim: #a0783022;
+      }
+
       :host {
         display: block;
         min-height: 100vh;
@@ -132,31 +139,29 @@ export class AuthModule extends LitElement {
         transition: opacity 0.2s;
       }
       .btn-primary:hover { opacity: 0.9; }
-
-      .btn-primary:hover { opacity: 0.9; }
     `,
   ];
 
   render() {
+    const version = this._contextData?.config.version;
+
     return html`
       <nav>
-        <div class="logo">lit<span>·</span>app</div>
+        <div class="logo">singha<span>·</span>auth</div>
         <div class="nav-actions">
           ${this._account ? html`
-            <navigation-bar .account=${this._account}></navigation-bar>
+            <navigation-bar></navigation-bar>
           ` : ''}
-          <button class="theme-btn" @click=${() =>
-            this._theme = this._theme === 'dark' ? 'light' : 'dark'}>
+          <button class="theme-btn" @click=${this._toggleTheme}>
             ${this._theme === 'dark' ? '☀ light' : '☾ dark'}
           </button>
         </div>
       </nav>
 
       <main>
-        <h1>Welcome to Auth Module ${this.config?.version ? html`<span style="font-size: 0.4em; color: var(--color-muted); font-family: var(--font-sans); vertical-align: middle; margin-left: 8px;">v${this.config.version}</span>` : ''}</h1>
+        <h1>Welcome to Auth Module ${version ? html`<span style="font-size: 0.4em; color: var(--color-muted); font-family: var(--font-sans); vertical-align: middle; margin-left: 8px;">v${version}</span>` : ''}</h1>
         ${this._account ? html`
           <user-info></user-info>
-          <task-list></task-list>
         ` : html`
           <div class="login-card">
             <h2 style="margin-bottom: 16px;">Secure Access</h2>
